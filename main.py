@@ -11,27 +11,39 @@ socket = QWebSocket()
 pingtime = 1000
 timeouttime = 500
 
+max_height = -1
+min_height = -1
+preset_count = -1
+
 
 def on_ws_connected():
     print("Verbunden!")
     timer_connection_timeout.start()
     timer_last_message_recieved.start()
     timer_reconnect.stop()
+    ws_send("i")
 
 def on_ws_disconnected():
     print("Getrennt!")
     timer_reconnect.start()
 
 def on_ws_message(message):
+    global max_height, min_height, preset_count
     timer_connection_timeout.start()
     timer_last_message_recieved.start()
 
     if message.startswith("H: "):
         height_mm = int(message[3:])
-        height_cm = height_mm / 10
-        print(f"Höhe: " + str(height_cm) + "cm")
+
     elif message.startswith("Info: "):
-        print(f"Info(recived): " + message)
+        parts = message[6:].split(" ")
+        max_height = int(parts[0])
+        min_height = int(parts[1])
+        preset_count = int(parts[2])
+        height_mm = int(parts[3])
+
+    height_cm = height_mm / 10
+    height_action.setText(f"Höhe: {height_cm}cm")
         
 def ws_send(message):
     socket.sendTextMessage(message)
@@ -71,6 +83,10 @@ menu.addAction("Preset 3", lambda: ws_send("3"))
 menu.addAction("Preset 4", lambda: ws_send("4"))
 menu.addSeparator()
 menu.addAction("Beenden", app.quit)
+menu.addSeparator()
+height_action = menu.addAction("Höhe: --")
+height_action.setEnabled(False)
+
 
 tray.setContextMenu(menu)
 
