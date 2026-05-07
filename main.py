@@ -51,6 +51,8 @@ def on_ws_message(message):
 
     if message.startswith("H: "):
         height_mm = int(message[3:])
+        height_cm = height_mm / 10
+        height_tray_action.setText(f"Height: {height_cm}cm")
 
     elif message.startswith("Info: "):
         parts = message[6:].split(" ")
@@ -58,9 +60,9 @@ def on_ws_message(message):
         min_height = int(parts[1])
         preset_count = int(parts[2])
         height_mm = int(parts[3])
+        height_cm = height_mm / 10
+        height_tray_action.setText(f"Height: {height_cm}cm")
 
-    height_cm = height_mm / 10
-    height_tray_action.setText(f"Height: {height_cm}cm")
         
 def ws_send(message):
     socket.sendTextMessage(message)
