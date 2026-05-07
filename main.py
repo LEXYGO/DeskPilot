@@ -15,8 +15,8 @@ os.makedirs(data_dir, exist_ok=True)
 config_file = os.path.join(data_dir, "config.json")
 
 socket = QWebSocket()
-pingtime = 5000
-timeouttime = 3000
+pingtime = 30000
+timeouttime = 10000
 
 def load_config():
     if os.path.exists(config_file):
@@ -39,9 +39,13 @@ def on_ws_connected():
     tray.setContextMenu(tray_menu_connected)
 
 def on_ws_disconnected():
-    print("Getrennt!")
+    print("on_ws_disconnected called")
+    tray.setVisible(False)
     tray.setContextMenu(tray_menu_disconnected)
+    tray.setVisible(True)
+    print("menu set")
     connectButton.setEnabled(True)
+    print("button enabled")
 
 def on_ws_message(message):
     print("Nachricht: " + message)
@@ -69,9 +73,13 @@ def ws_send(message):
     print("WS " + message + " gesendet")
 
 def closesocket():
+    print("closesocket called")
     timer_connection_timeout.stop()
+    print("timeout timer stopped")
     timer_last_message_recieved.stop()
+    print("ping timer stopped")
     socket.close()
+    print("socket closed")
 
 def connect_socket():
     connectButton.setEnabled(False)
