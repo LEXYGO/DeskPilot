@@ -17,6 +17,7 @@ config_file = os.path.join(data_dir, "config.json")
 socket = QWebSocket()
 pingtime = 30000
 timeouttime = 10000
+reconnecttime = 30000
 
 def load_config():
     if os.path.exists(config_file):
@@ -86,9 +87,11 @@ def connect_socket():
     print("Trying to connect....")
     socket.open(QUrl("ws://" + config["ip"] + ":" + config["port"]))
 
-# def enable_systray():
+def connection_timeout():
+    closesocket()
+    timer_time_since_connection_timeout.start()
+    print("timeout registered")
 
-# def disable_systray():
 
 
 timer_last_message_recieved = QTimer()
@@ -97,7 +100,12 @@ timer_last_message_recieved.timeout.connect(lambda: ws_send("i"))
 
 timer_connection_timeout = QTimer()
 timer_connection_timeout.setInterval(pingtime + timeouttime)
-timer_connection_timeout.timeout.connect(closesocket)
+timer_connection_timeout.timeout.connect(connection_timeout)
+
+timer_time_since_connection_timeout = QTimer()
+timer_time_since_connection_timeout.setInterval(reconnecttime)
+timer_time_since_connection_timeout.setSingleShot(True)
+timer_time_since_connection_timeout.timeout.connect(connect_socket)
 
 
 tray = QSystemTrayIcon()
@@ -123,13 +131,15 @@ if config["preset_count"] >= 8:
 if config["preset_count"] >= 9:
     tray_menu_connected.addAction("Preset 9" + " --- " + config["p9"], lambda: ws_send("9"))
 tray_menu_connected.addSeparator()
-tray_menu_connected.addAction("Beenden", app.quit)
+# tray_menu_connected.addAction("Open Config-Window")
+tray_menu_connected.addAction("disconnect", lambda: closesocket())
+tray_menu_connected.addAction("Quit", app.quit)
 tray_menu_connected.addSeparator()
-height_tray_action = tray_menu_connected.addAction("Höhe: --")
+height_tray_action = tray_menu_connected.addAction("Height: --")
 height_tray_action.setEnabled(False)
 
 tray_menu_disconnected = QMenu()
-tray_menu_disconnected.addAction("Not connected to ESP").setEnabled(False )
+tray_menu_disconnected.addAction("Not connected to desk").setEnabled(False )
 connectButton = tray_menu_disconnected.addAction("CONNECT", lambda: connect_socket())
 tray_menu_disconnected.addSeparator()
 tray_menu_disconnected.addAction("Beenden", app.quit)
