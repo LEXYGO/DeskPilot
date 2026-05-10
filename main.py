@@ -6,6 +6,7 @@ from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
 from PySide6.QtWebSockets import QWebSocket
 from PySide6.QtCore import QUrl, QTimer
 from PySide6.QtGui import QIcon
+from dashboard import Dashboard
 
 app = QApplication(sys.argv)
 app.setQuitOnLastWindowClosed(False)
@@ -31,6 +32,7 @@ def save_config():
 
 config = load_config()
 print(config)
+
 
 def on_ws_connected():
     print("Verbunden!")
@@ -88,11 +90,17 @@ def connect_socket():
     socket.open(QUrl("ws://" + config["ip"] + ":" + config["port"]))
 
 def connection_timeout():
-    closesocket()
-    timer_time_since_connection_timeout.start()
     print("timeout registered")
+    print("reconnect initialized")
+    reconnect_socket()
+    
 
+def reconnect_socket():
+    closesocket()
+    timer_time_until_reconnect.start()
+    connect_socket()    
 
+dashboard = Dashboard(config, save_config, reconnect_socket)
 
 timer_last_message_recieved = QTimer()
 timer_last_message_recieved.setInterval(pingtime)
@@ -102,10 +110,10 @@ timer_connection_timeout = QTimer()
 timer_connection_timeout.setInterval(pingtime + timeouttime)
 timer_connection_timeout.timeout.connect(connection_timeout)
 
-timer_time_since_connection_timeout = QTimer()
-timer_time_since_connection_timeout.setInterval(reconnecttime)
-timer_time_since_connection_timeout.setSingleShot(True)
-timer_time_since_connection_timeout.timeout.connect(connect_socket)
+timer_time_until_reconnect = QTimer()
+timer_time_until_reconnect.setInterval(reconnecttime)
+timer_time_until_reconnect.setSingleShot(True)
+timer_time_until_reconnect.timeout.connect(connect_socket)
 
 
 tray = QSystemTrayIcon()
@@ -131,7 +139,7 @@ if config["preset_count"] >= 8:
 if config["preset_count"] >= 9:
     tray_menu_connected.addAction("Preset 9" + " --- " + config["p9"], lambda: ws_send("9"))
 tray_menu_connected.addSeparator()
-# tray_menu_connected.addAction("Open Config-Window")
+tray_menu_connected.addAction("Open Dashboard", lambda: dashboard.show())
 tray_menu_connected.addAction("disconnect", lambda: closesocket())
 tray_menu_connected.addAction("Quit", app.quit)
 tray_menu_connected.addSeparator()
@@ -139,9 +147,10 @@ height_tray_action = tray_menu_connected.addAction("Height: --")
 height_tray_action.setEnabled(False)
 
 tray_menu_disconnected = QMenu()
-tray_menu_disconnected.addAction("Not connected to desk").setEnabled(False )
+tray_menu_disconnected.addAction("Not connected to desk @ IP:" + config["ip"]).setEnabled(False )
 connectButton = tray_menu_disconnected.addAction("CONNECT", lambda: connect_socket())
 tray_menu_disconnected.addSeparator()
+tray_menu_disconnected.addAction("Open Dashboard", lambda: dashboard.show())
 tray_menu_disconnected.addAction("Beenden", app.quit)
 
 tray.setContextMenu(tray_menu_disconnected)
