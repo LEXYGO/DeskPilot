@@ -4,9 +4,10 @@ import json
 from platformdirs import user_data_dir
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
 from PySide6.QtWebSockets import QWebSocket
-from PySide6.QtCore import QUrl, QTimer
-from PySide6.QtGui import QIcon
+from PySide6.QtCore import QUrl, QTimer, QByteArray, Qt
+from PySide6.QtGui import QIcon, QPainter, QPixmap
 from dashboard import Dashboard
+from iconhelper import create_tray_icon
 
 app = QApplication(sys.argv)
 app.setQuitOnLastWindowClosed(False)
@@ -117,7 +118,8 @@ timer_time_until_reconnect.timeout.connect(connect_socket)
 
 
 tray = QSystemTrayIcon()
-tray.setIcon(QIcon.fromTheme("computer"))
+tray.setIcon(create_tray_icon("icons/desk.svg", "#140F53"))
+###tray.setIcon(QIcon("icons/desk.svg"))
 
 tray_menu_connected = QMenu()
 if config["preset_count"] >= 1:
