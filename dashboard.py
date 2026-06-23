@@ -7,7 +7,7 @@ class Dashboard(QMainWindow):
         self.save_config = save_config
         self.reconnect_socket = reconnect_socket
 
-        self.setWindowTitle("DeskMate Dashboard")
+        self.setWindowTitle("DeskPilot Dashboard")
 
         # Main-Area of the Window
         central = QWidget()

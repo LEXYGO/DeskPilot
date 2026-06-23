@@ -12,7 +12,7 @@ from iconhelper import create_tray_icon
 app = QApplication(sys.argv)
 app.setQuitOnLastWindowClosed(False)
 
-data_dir = user_data_dir("DeskMate", "DeskMate")
+data_dir = user_data_dir("DeskPilot", "DeskPilot")
 os.makedirs(data_dir, exist_ok=True)
 config_file = os.path.join(data_dir, "config.json")
 
@@ -72,8 +72,7 @@ def on_ws_message(message):
         height_mm = int(parts[3])
         height_cm = height_mm / 10
         height_tray_action.setText(f"Height: {height_cm}cm")
-
-        
+     
 def ws_send(message):
     socket.sendTextMessage(message)
     print("WS " + message + " gesendet")
@@ -96,7 +95,6 @@ def connection_timeout():
     print("timeout registered")
     print("reconnect initialized")
     reconnect_socket()
-    
 
 def reconnect_socket():
     closesocket()
@@ -143,9 +141,9 @@ if config["preset_count"] >= 8:
 if config["preset_count"] >= 9:
     tray_menu_connected.addAction("Preset 9" + " --- " + config["p9"], lambda: ws_send("9"))
 tray_menu_connected.addSeparator()
-tray_menu_connected.addAction("Open Dashboard", lambda: dashboard.show())
+tray_menu_connected.addAction("open dashboard", lambda: dashboard.show())
 tray_menu_connected.addAction("disconnect", lambda: closesocket())
-tray_menu_connected.addAction("Quit", app.quit)
+tray_menu_connected.addAction("quit", app.quit)
 tray_menu_connected.addSeparator()
 height_tray_action = tray_menu_connected.addAction("Height: --")
 height_tray_action.setEnabled(False)
@@ -155,8 +153,8 @@ tray_menu_disconnected.addAction("Not connected to desk @ IP:" + config["ip"]).s
 tray_menu_disconnected.addAction("If this IP-Adress is wrong, please change it, using the dashboard").setEnabled(False)
 connectButton = tray_menu_disconnected.addAction("CONNECT", lambda: connect_socket())
 tray_menu_disconnected.addSeparator()
-tray_menu_disconnected.addAction("Open Dashboard", lambda: dashboard.show())
-tray_menu_disconnected.addAction("Beenden", app.quit)
+tray_menu_disconnected.addAction("open dashboard", lambda: dashboard.show())
+tray_menu_disconnected.addAction("quit", app.quit)
 
 tray.setContextMenu(tray_menu_disconnected)
 
