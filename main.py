@@ -41,6 +41,7 @@ def on_ws_connected():
     timer_last_message_recieved.start()
     ws_send("i")
     tray.setContextMenu(tray_menu_connected)
+    tray.setIcon(create_tray_icon("icons/desk.svg", "#000000"))
 
 def on_ws_disconnected():
     print("on_ws_disconnected called")
@@ -50,6 +51,7 @@ def on_ws_disconnected():
     print("menu set")
     connectButton.setEnabled(True)
     print("button enabled")
+    tray.setIcon(create_tray_icon("icons/desk.svg", "#FF0000"))
 
 def on_ws_message(message):
     print("Nachricht: " + message)
@@ -118,7 +120,7 @@ timer_time_until_reconnect.timeout.connect(connect_socket)
 
 
 tray = QSystemTrayIcon()
-tray.setIcon(create_tray_icon("icons/desk.svg", "#140F53"))
+tray.setIcon(create_tray_icon("icons/desk.svg", "#0066FF"))
 ###tray.setIcon(QIcon("icons/desk.svg"))
 
 tray_menu_connected = QMenu()
