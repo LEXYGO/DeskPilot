@@ -1,3 +1,6 @@
+VERSION = "0.0.0"
+BUILD = "///"
+
 import sys
 import os
 import json
@@ -101,7 +104,7 @@ def reconnect_socket():
     timer_time_until_reconnect.start()
     connect_socket()    
 
-dashboard = Dashboard(config, save_config, reconnect_socket)
+dashboard = Dashboard(config, save_config, reconnect_socket, VERSION, BUILD)
 
 timer_last_message_recieved = QTimer()
 timer_last_message_recieved.setInterval(pingtime)
