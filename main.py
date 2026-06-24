@@ -40,6 +40,7 @@ def load_config():
 def save_config():
     with open(config_file, "w") as f:
         json.dump(config, f)
+        build_tray_menu()
 
 def on_ws_connected():
     print("Verbunden!")
@@ -92,7 +93,6 @@ def on_ws_message(message):
             config_updated_by_desk = True
         if config_updated_by_desk:
             save_config()
-            build_tray_menu()
             tray.setContextMenu(tray_menu_connected)
             print("Config updated by desk, saved and menu rebuilt")
             
