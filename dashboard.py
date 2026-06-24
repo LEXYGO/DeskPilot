@@ -65,6 +65,10 @@ class Dashboard(QMainWindow):
         © 2026 Lennard Hanß<br>
         Licensed under the MIT License
         </p>
+
+        <p>
+        <a href="https://github.com/LEXYGO/DeskPilot">GitHub</a>
+        </p>
         """
 
         QMessageBox.about(self, "About DeskPilot", text)
