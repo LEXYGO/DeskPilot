@@ -1,5 +1,5 @@
-VERSION = "0.0.2"
-BUILD = "2026.06.25"
+VERSION = "0.0.3"
+BUILD = "2026.06.25/2"
 
 import sys
 import os
@@ -11,6 +11,7 @@ from PySide6.QtCore import QUrl, QTimer, QByteArray, Qt
 from PySide6.QtGui import QIcon, QPainter, QPixmap
 from dashboard import Dashboard
 from iconhelper import create_tray_icon
+from path_helper import resource_path
 
 app = QApplication(sys.argv)
 app.setQuitOnLastWindowClosed(False)
@@ -28,13 +29,6 @@ tray_menu_connected = QMenu()
 tray_menu_disconnected = QMenu()
 height_tray_action = None
 connectButton = None
-
-def resource_path(relative_path):
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
 
 def load_config():
     if os.path.exists(config_file):

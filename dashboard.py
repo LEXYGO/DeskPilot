@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox
 from PySide6.QtGui import QAction, QIcon
+from path_helper import resource_path
 
 class Dashboard(QMainWindow):
     def __init__(self, config, save_config, reconnect_socket, version, build):
@@ -11,7 +12,7 @@ class Dashboard(QMainWindow):
         self.build = build
 
         self.setWindowTitle("DeskPilot Dashboard")
-        self.setWindowIcon(QIcon("icons/desk.svg"))
+        self.setWindowIcon(QIcon(resource_path("icons/desk.svg")))
 
         # Menubar
         help_menu = self.menuBar().addMenu("Help")
