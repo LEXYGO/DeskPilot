@@ -21,7 +21,7 @@ The following desk modules are planned or already compatible:
 You can download the pre-compiled binaries for Windows and Linux from the [Releases](https://github.com/DEIN/LEXYGO/DeskPilot/releases) page.
 
 ### 🪟 Windows
-1. Download the `DeskPilot_Vx.x.x_x86-64_Setup.exe`.
+1. Download the `DeskPilot_Vx.x.x_x86-64_setup.exe`.
 2. Run the installer and follow the instructions.
 3. The App can be set to launch on system startup.
 
