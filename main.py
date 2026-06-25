@@ -1,5 +1,5 @@
-VERSION = "0.0.1"
-BUILD = "2026.06.24"
+VERSION = "0.0.2"
+BUILD = "2026.06.25"
 
 import sys
 import os
@@ -29,7 +29,12 @@ tray_menu_disconnected = QMenu()
 height_tray_action = None
 connectButton = None
 
-
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 def load_config():
     if os.path.exists(config_file):
@@ -48,7 +53,7 @@ def on_ws_connected():
     timer_last_message_recieved.start()
     ws_send("i")
     tray.setContextMenu(tray_menu_connected)
-    tray.setIcon(create_tray_icon("icons/desk.svg", "#000000"))
+    tray.setIcon(create_tray_icon(resource_path("icons/desk.svg"), "#000000"))
 
 def on_ws_disconnected():
     print("on_ws_disconnected called")
@@ -58,7 +63,7 @@ def on_ws_disconnected():
     print("menu set")
     connectButton.setEnabled(True)
     print("button enabled")
-    tray.setIcon(create_tray_icon("icons/desk.svg", "#FF0000"))
+    tray.setIcon(create_tray_icon(resource_path("icons/desk.svg"), "#FF0000"))
 
 def on_ws_message(message):
     print("Nachricht: " + message)
@@ -187,7 +192,7 @@ timer_time_until_reconnect.timeout.connect(connect_socket)
 
 
 tray = QSystemTrayIcon()
-tray.setIcon(create_tray_icon("icons/desk.svg", "#0066FF"))
+tray.setIcon(create_tray_icon(resource_path("icons/desk.svg"), "#0066FF"))
 ###tray.setIcon(QIcon("icons/desk.svg"))
 
 build_tray_menu()
