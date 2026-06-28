@@ -76,7 +76,7 @@ The app stores settings in a configuration file under the user data directory:
 
 ## Contributing & Support
 
-If you encounter any bugs or have feature requests, please open an issue on the [GitHub Issue Tracker](https://github.com/DEIN/LEXYGO/DeskPilot/issues).
+If you encounter any bugs or have feature requests, please open an issue on the [GitHub Issue Tracker](https://github.com/LEXYGO/DeskPilot/issues).
 
 ## License
 
