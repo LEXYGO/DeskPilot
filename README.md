@@ -2,6 +2,8 @@
 
 DeskPilot is a small desktop application for controlling height-adjustable desks through a compatible desk module.
 
+## Features
+
 The app runs as a tray application on Linux and connects via WebSocket to a compatible desk module. It displays the current desk height, controls presets, and saves user settings locally.
 
 ## Features
@@ -10,15 +12,36 @@ The app runs as a tray application on Linux and connects via WebSocket to a comp
 - Current desk height display
 - Support for up to 9 presets
 
-## Compatible Desk Modules
+## Officialy supported / planed Desk Modules:
 
 The following desk modules are planned or already compatible:
 
 - **FlexiSmart** by @LEXYGO for LoctecMotion and Flexispot desks (repository not public yet, but I am working on it :D)
 
+### Supported module requirements
+
+Official desk modules must support the following command interface and behavior over WebSocket on port 81:
+
+- `i` : Request device info in the format `<max_height> <min_height> <presetcount> <current_height_in_mm>`
+- `s` : Stop up/down movement
+- `d` : Move **down** until stopped
+- `u` : Move **up** until stopped
+- `goto<requested_height>` : Move to the requested height (exact height not required; a close value is sufficient)
+- `1` : Move to preset 1 if it exists on the desk
+- `2` : Move to preset 2 if it exists on the desk
+- `3` : Move to preset 3 if it exists on the desk
+- `4` : Move to preset 4 if it exists on the desk
+- `5` : Move to preset 5 if it exists on the desk
+- `6` : Move to preset 6 if it exists on the desk
+- `7` : Move to preset 7 if it exists on the desk
+- `8` : Move to preset 8 if it exists on the desk
+- `9` : Move to preset 9 if it exists on the desk
+
+Additionally, the desk must send its current height in millimeters every time the height changes.
+
 ## Download & Installation
 
-You can download the pre-compiled binaries for Windows and Linux from the [Releases](https://github.com/DEIN/LEXYGO/DeskPilot/releases) page.
+You can download the pre-compiled binaries for Windows and Linux from the [Releases](https://github.com/LEXYGO/DeskPilot/releases) page.
 
 ### 🪟 Windows
 1. Download the `DeskPilot_Vx.x.x_x86-64_setup.exe`.
