@@ -22,7 +22,7 @@ The following desk modules are planned or already compatible:
 
 Official desk modules must support the following command interface and behavior over WebSocket on port 81:
 
-- `i` : Request device info in the format `<max_height> <min_height> <presetcount> <current_height_in_mm> <desk-hostname>`
+- `i` : Request device info in the format `<max_height> <min_height> <presetcount> <current_height_in_mm> <desk_name>`
 - `s` : Stop up/down movement
 - `d` : Move **down** until stopped
 - `u` : Move **up** until stopped
@@ -37,7 +37,10 @@ Official desk modules must support the following command interface and behavior 
 - `8` : Move to preset 8 if it exists on the desk
 - `9` : Move to preset 9 if it exists on the desk
 
-Additionally, the desk must send its current height in millimeters every time the height changes.
+Additionally, the desk **must** send its current height in millimeters every time the height changes.
+The desk will be able to send notifications via "Notify: <notification_type> "<notification_string>"" Planed nofification types will be "error" and "info".
+
+⚠️ Many commands, such as Notify, are not yet utilised by the Desktop Software, but are requirered for planed features in the future ⚠️
 
 ## Download & Installation
 
