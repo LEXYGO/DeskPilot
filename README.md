@@ -22,7 +22,7 @@ The following desk modules are planned or already compatible:
 
 Official desk modules must support the following command interface and behavior over WebSocket on port 81:
 
-- `i` : Request device info in the format `<max_height> <min_height> <presetcount> <current_height_in_mm>`
+- `i` : Request device info in the format `<max_height> <min_height> <presetcount> <current_height_in_mm> <desk-hostname>`
 - `s` : Stop up/down movement
 - `d` : Move **down** until stopped
 - `u` : Move **up** until stopped
