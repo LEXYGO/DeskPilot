@@ -40,7 +40,7 @@ Official desk modules must support the following command interface and behavior 
 Additionally, the desk **must** send its current height in millimeters every time the height changes.
 The desk will be able to send notifications via "Notify: <notification_type> "<notification_string>"" Planed nofification types will be "error" and "info".
 
-⚠️ Many commands, such as Notify, are not yet utilised by the Desktop Software, but are requirered for planed features in the future ⚠️
+⚠️ Some commands, such as goto, are not yet utilised by the Desktop Software, but are requirered for planed features in the future ⚠️
 
 ## Download & Installation
 

@@ -1,5 +1,5 @@
-VERSION = "1.0.2"
-BUILD = "2026.07.01/2"
+VERSION = "1.0.3"
+BUILD = "2026.07.02/2"
 
 import sys
 import os
@@ -121,6 +121,34 @@ def on_ws_message(message):
             save_config()
             tray.setContextMenu(tray_menu_connected)
             print("Config updated by desk, saved and menu rebuilt")
+
+    elif message.startswith("Notify: "):
+        payload = message[8:]
+        notification_type = "info"
+        notification = ""
+
+        if payload.startswith("error"):
+            icon = create_tray_icon(resource_path("icons/desk.svg"), "#FF0000")
+            notification_type = "ERROR"
+            notification = payload[7:-1]
+        if payload.startswith("info"):
+            palette = app.palette()
+            window_color = palette.color(QPalette.Window)
+            darkmode = window_color.lightness() < 128
+            if darkmode:
+                icon = create_tray_icon(resource_path("icons/desk.svg"), "#FFFFFF")
+            else:
+                icon = create_tray_icon(resource_path("icons/desk.svg"), "#000000")
+            notification_type = "INFO"
+            notification = payload[6:-1]
+
+        tray.showMessage(
+            f"DeskPilot - Recieved {notification_type} from desk",
+            notification,
+            icon,
+            10000
+        )
+            
             
 def ws_send(message):
     socket.sendTextMessage(message)
@@ -194,7 +222,6 @@ def build_tray_menu():
 
 config = load_config()
 print(config)
-
 
 dashboard = Dashboard(config, save_config, reconnect_socket, VERSION, BUILD)
 
