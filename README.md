@@ -47,12 +47,12 @@ The desk will be able to send notifications via "Notify: <notification_type> "<n
 You can download the pre-compiled binaries for Windows and Linux from the [Releases](https://github.com/LEXYGO/DeskPilot/releases) page.
 
 ### 🪟 Windows
-1. Download the `DeskPilot_Vx.x.x_x86-64_setup.exe`.
+1. Download the `DeskPilot_vx.x.x_x86-64_setup.exe`.
 2. Run the installer and follow the instructions.
 3. The App can be set to launch on system startup.
 
 ### 🐧 Linux (AppImage)
-1. Download the `DeskPilot_Vx.x.x_x86-64.AppImage`.
+1. Download the `DeskPilot_vx.x.x_x86-64.AppImage`.
 2. Make it executable via your file manager or run the following terminal command:
    ```bash
    chmod +x DeskPilot_Vx.x.x_x86-64.AppImage

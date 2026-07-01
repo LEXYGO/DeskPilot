@@ -1,0 +1,121 @@
+name: Build and Release DeskPilot
+
+on:
+  push:
+    tags:
+      - 'v*' # Starts, as soon as a new tag starting with "v" is pushed, e.g., v1.0.0
+
+jobs:
+  # ==========================================
+  # WINDOWS BUILD
+  # ==========================================
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: checking out code
+        uses: actions/checkout@v4
+
+      - name: setting up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14.6'
+
+      - name: installing dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r build_assets/requirements.txt
+          pip install pyinstaller
+
+      - name: building Windows Binary with PyInstaller
+        run: pyinstaller --onefile --windowed --icon=icons/desk.ico --add-data="icons;icons" --name DeskPilot main.py 
+
+      - name: Extracting version from Git tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Building Windows Installer with Inno Setup
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion="${{ env.VERSION }}" build_assets/deskpilot.iss
+
+      - name: Preparing file names for release
+        run: |
+          mv dist/DeskPilot.exe "dist/DeskPilot_${{ env.VERSION }}_Windows_x86-64.exe"
+        shell: bash
+
+      - name: Saving Windows files temporarily
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-artifacts
+          path: |
+            dist/DeskPilot_*.exe
+            build_assets/Output/DeskPilot_*_setup.exe
+
+  # ==========================================
+  # LINUX BUILD
+  # ==========================================
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checking out code
+        uses: actions/checkout@v4
+
+      - name: setting up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14.6'
+
+      - name: installing dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfuse2
+          python -m pip install --upgrade pip
+          pip install -r build_assets/requirements.txt
+          pip install pyinstaller
+
+      - name: building Linux Binary with PyInstaller
+        run: pyinstaller --onefile --windowed --add-data="icons:icons" --name DeskPilot_Binary main.py
+
+      - name: Extracting version from Git tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Building Linux AppImage using linuxdeploy
+        run: |
+          wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          chmod +x linuxdeploy-x86_64.AppImage
+          
+          export VERSION="${{ env.VERSION }}"
+          ./linuxdeploy-x86_64.AppImage --executable=dist/DeskPilot_Binary --desktop-file=build_assets/deskpilot.desktop --icon-file=icons/desk.svg --appdir=AppDir --output appimage
+          
+          mv DeskPilot_Binary-x86_64.AppImage "DeskPilot_${{ env.VERSION }}_Linux_x86-64.AppImage"
+
+      - name: Saving Linux files temporarily
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-artifacts
+          path: "DeskPilot_*.AppImage"
+
+  # ==========================================
+  # PUBLISH RELEASE
+  # ==========================================
+  publish-release:
+    needs: [build-windows, build-linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Downloading all artifacts from previous jobs
+        uses: actions/download-artifact@v4
+        with:
+          path: ./release-files
+
+      - name: Creating GitHub Release and Uploading Artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-files/windows-artifacts/dist/DeskPilot_*.exe
+            release-files/windows-artifacts/build_assets/Output/DeskPilot_*_setup.exe
+            release-files/linux-artifacts/DeskPilot_*.AppImage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

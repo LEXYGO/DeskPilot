@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=DeskPilot
+Comment=A great way to control your standing-desk
+Exec=DeskPilot_Binary
+Icon=desk
+Categories=Utility;
+Terminal=false
