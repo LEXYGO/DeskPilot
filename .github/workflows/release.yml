@@ -89,12 +89,31 @@ jobs:
           ./linuxdeploy-x86_64.AppImage --executable=dist/DeskPilot_Binary --desktop-file=build_assets/deskpilot.desktop --icon-file=icons/desk.svg --appdir=AppDir --output appimage
           
           mv DeskPilot-${{ env.VERSION }}-x86_64.AppImage "DeskPilot_${{ env.VERSION }}_Linux_x86-64.AppImage"
+          chmod +x "DeskPilot_${{ env.VERSION }}_Linux_x86-64.AppImage"
+
+      - name : Preparing linux installer
+        run: |
+          tar -czvf "DeskPilot_${{ env.VERSION }}_Linux_x86-64.tar.gz" \
+            "DeskPilot_${{ env.VERSION }}_Linux_x86-64.AppImage" \
+            -C build_assets deskpilot.desktop \
+            -C ../../icons desk.svg
+
+          echo "#!/bin/bash" > "DeskPilot_${{ env.VERSION }}_Linux_x86-64.run"
+          echo "VERSION=\"${{ env.VERSION }}\"" >> "DeskPilot_${{ env.VERSION }}_Linux_x86-64.run"
+
+          cat build_assets/linux-installer.blueprint >> "DeskPilot_${{ env.VERSION }}_Linux_x86-64.run"
+
+          cat "DeskPilot_${{ env.VERSION }}_Linux_x86-64.tar.gz" >> "DeskPilot_${{ env.VERSION }}_Linux_x86-64.run"
+          mv "DeskPilot_${{ env.VERSION }}_Linux_x86-64.run" "DeskPilot_${{ env.VERSION }}_Linux_x86-64_setup.run"
+          chmod +x "DeskPilot_${{ env.VERSION }}_Linux_x86-64_setup.run"
 
       - name: Saving Linux files temporarily
         uses: actions/upload-artifact@v4
         with:
           name: linux-artifacts
-          path: "DeskPilot_*.AppImage"
+          path: |
+            DeskPilot_*.AppImage
+            DeskPilot_*_setup.run
 
   # ==========================================
   # PUBLISH RELEASE
@@ -117,5 +136,6 @@ jobs:
             release-files/windows-artifacts/dist/DeskPilot_*.exe
             release-files/windows-artifacts/build_assets/Output/DeskPilot_*_setup.exe
             release-files/linux-artifacts/DeskPilot_*.AppImage
+            release-files/linux-artifacts/DeskPilot_*_setup.run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
