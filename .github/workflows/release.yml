@@ -95,8 +95,8 @@ jobs:
         run: |
           tar -czvf "DeskPilot_${{ env.VERSION }}_Linux_x86-64.tar.gz" \
             "DeskPilot_${{ env.VERSION }}_Linux_x86-64.AppImage" \
-            -C build_assets deskpilot.desktop \
-            -C ../../icons desk.svg
+            build_assets/deskpilot.desktop \
+            icons/desk.svg
 
           echo "#!/bin/bash" > "DeskPilot_${{ env.VERSION }}_Linux_x86-64.run"
           echo "VERSION=\"${{ env.VERSION }}\"" >> "DeskPilot_${{ env.VERSION }}_Linux_x86-64.run"
