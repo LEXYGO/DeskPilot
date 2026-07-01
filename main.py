@@ -1,5 +1,5 @@
-VERSION = "1.0.0"
-BUILD = "2026.06.25/3"
+VERSION = "1.0.1"
+BUILD = "2026.07.01"
 
 import sys
 import os
@@ -8,7 +8,7 @@ from platformdirs import user_data_dir
 from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
 from PySide6.QtWebSockets import QWebSocket
 from PySide6.QtCore import QUrl, QTimer, QByteArray, Qt
-from PySide6.QtGui import QIcon, QPainter, QPixmap
+from PySide6.QtGui import QIcon, QPainter, QPixmap, QPalette
 from dashboard import Dashboard
 from iconhelper import create_tray_icon
 from path_helper import resource_path
@@ -29,6 +29,30 @@ tray_menu_connected = QMenu()
 tray_menu_disconnected = QMenu()
 height_tray_action = None
 connectButton = None
+current_taskbar_icon_color = ""
+
+def update_systray_icon(status):
+    global current_taskbar_icon_color
+    palette = app.palette()
+    window_color = palette.color(QPalette.Window)
+    darkmode = window_color.lightness() < 128
+    
+    if status == "connected":
+        if darkmode:
+            if current_taskbar_icon_color != "#FFFFFF":
+                tray.setIcon(create_tray_icon(resource_path("icons/desk.svg"), "#FFFFFF"))
+                current_taskbar_icon_color = "#FFFFFF"
+                print("update_systray_icon called with status: " + status)
+        else:
+            if current_taskbar_icon_color != "#000000":
+                tray.setIcon(create_tray_icon(resource_path("icons/desk.svg"), "#000000"))
+                current_taskbar_icon_color = "#000000"
+                print("update_systray_icon called with status: " + status)
+    if status == "disconnected":
+        if current_taskbar_icon_color != "#FF0000":
+            tray.setIcon(create_tray_icon(resource_path("icons/desk.svg"), "#FF0000"))
+            current_taskbar_icon_color = "#FF0000"
+            print("update_systray_icon called with status: " + status)
 
 def load_config():
     if os.path.exists(config_file):
@@ -47,7 +71,7 @@ def on_ws_connected():
     timer_last_message_recieved.start()
     ws_send("i")
     tray.setContextMenu(tray_menu_connected)
-    tray.setIcon(create_tray_icon(resource_path("icons/desk.svg"), "#000000"))
+    update_systray_icon("connected")
 
 def on_ws_disconnected():
     print("on_ws_disconnected called")
@@ -57,9 +81,10 @@ def on_ws_disconnected():
     print("menu set")
     connectButton.setEnabled(True)
     print("button enabled")
-    tray.setIcon(create_tray_icon(resource_path("icons/desk.svg"), "#FF0000"))
+    update_systray_icon("disconnected")
 
 def on_ws_message(message):
+    update_systray_icon("connected")
     print("Nachricht: " + message)
     global max_height, min_height, preset_count
     timer_connection_timeout.start()
@@ -78,6 +103,8 @@ def on_ws_message(message):
         min_height = int(parts[1])
         preset_count = int(parts[2])
         height_mm = int(parts[3])
+        deskname = "".join(parts[4:])
+
         height_cm = height_mm / 10
         if height_tray_action:
             height_tray_action.setText(f"Height: {height_cm}cm")
@@ -184,10 +211,9 @@ timer_time_until_reconnect.setInterval(reconnecttime)
 timer_time_until_reconnect.setSingleShot(True)
 timer_time_until_reconnect.timeout.connect(connect_socket)
 
-
 tray = QSystemTrayIcon()
 tray.setIcon(create_tray_icon(resource_path("icons/desk.svg"), "#0066FF"))
-###tray.setIcon(QIcon("icons/desk.svg"))
+current_taskbar_icon_color = "#0066FF"
 
 build_tray_menu()
 
