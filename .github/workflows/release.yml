@@ -88,7 +88,7 @@ jobs:
           export VERSION="${{ env.VERSION }}"
           ./linuxdeploy-x86_64.AppImage --executable=dist/DeskPilot_Binary --desktop-file=build_assets/deskpilot.desktop --icon-file=icons/desk.svg --appdir=AppDir --output appimage
           
-          mv DeskPilot_Binary-x86_64.AppImage "DeskPilot_${{ env.VERSION }}_Linux_x86-64.AppImage"
+          mv DeskPilot-${{ env.VERSION }}-x86_64.AppImage "DeskPilot_${{ env.VERSION }}_Linux_x86-64.AppImage"
 
       - name: Saving Linux files temporarily
         uses: actions/upload-artifact@v4

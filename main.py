@@ -1,5 +1,5 @@
-VERSION = "1.0.1"
-BUILD = "2026.07.01"
+VERSION = "1.0.2"
+BUILD = "2026.07.01/2"
 
 import sys
 import os
