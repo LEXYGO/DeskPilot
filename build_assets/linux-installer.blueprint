@@ -1,7 +1,8 @@
 TARGET_DIR="$HOME/.local/share/DeskPilot"
 APP_NAME="DeskPilot"
 
-# Das 'EOF' in Anführungszeichen sorgt dafür, dass kein Zeichen escaped werden muss!
+set -e
+
 cat << 'EOF'
      @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@      
    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@    
@@ -54,15 +55,15 @@ rm -f "$HOME/.local/share/applications/deskpilot.desktop"
 
 cat "$0" | sed '1,/^#---ARCHIVE_START---#/d' > "$TARGET_DIR/temp/DeskPilot.tar.gz"
 
-tar -xzvf "$TARGET_DIR/temp/DeskPilot.tar.gz" -C "$TARGET_DIR/temp/"
+tar -xzf "$TARGET_DIR/temp/DeskPilot.tar.gz" -C "$TARGET_DIR/temp/"
 
-find "$TARGET_DIR/temp" -name "*.AppImage" -exec mv {} "$TARGET_DIR/bin/DeskPilot.AppImage" \;
-chmod +x "$TARGET_DIR/bin/DeskPilot.AppImage"
+mv "$TARGET_DIR/temp/DeskPilot_${VERSION}_Linux_x86-64.AppImage" "$TARGET_DIR/bin/DeskPilot_${VERSION}_Linux_x86-64.AppImage"
+chmod +x "$TARGET_DIR/bin/DeskPilot_${VERSION}_Linux_x86-64.AppImage"
 
-find "$TARGET_DIR/temp" -name "*.svg" -exec mv {} "$TARGET_DIR/icon.svg" \;
-find "$TARGET_DIR/temp" -name "*.desktop" -exec mv {} "$HOME/.local/share/applications/deskpilot.desktop" \;
+mv "$TARGET_DIR/temp/icons/desk.svg" "$TARGET_DIR/icon.svg"
+mv "$TARGET_DIR/temp/build_assets/deskpilot.desktop" "$HOME/.local/share/applications/deskpilot.desktop"
 
-sed -i "s|Exec=.*|Exec=$TARGET_DIR/bin/DeskPilot.AppImage|g" "$HOME/.local/share/applications/deskpilot.desktop"
+sed -i "s|Exec=.*|Exec=$TARGET_DIR/bin/DeskPilot_${VERSION}_Linux_x86-64.AppImage|g" "$HOME/.local/share/applications/deskpilot.desktop"
 sed -i "s|Icon=.*|Icon=$TARGET_DIR/icon.svg|g" "$HOME/.local/share/applications/deskpilot.desktop"
 
 rm -rf "$TARGET_DIR/temp"
